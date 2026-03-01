@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from datetime import datetime, timedelta, timezone
 
-from homeassistant.components.geo_location import GeoLocationEntity
+from homeassistant.components.geo_location import GeolocationEvent
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
 from .const import DOMAIN, CONF_STALE_SECONDS, DEFAULT_STALE_SECONDS
@@ -21,7 +21,7 @@ async def async_setup_entry(hass, entry, async_add_entities):
                 if not hx:
                     continue
                 if hx not in store:
-                    ent = AdsbAircraftEntity(coordinator, entry, hx)
+                    ent = AdsbAircraftEvent(coordinator, entry, hx)
                     store[hx] = ent
                     entities.append(ent)
         if entities:
@@ -40,20 +40,20 @@ async def async_setup_entry(hass, entry, async_add_entities):
         add_new_entities()
         cleanup_stale()
 
-    # initial add
     add_new_entities()
     coordinator.async_add_listener(_handle_update)
 
 
-class AdsbAircraftEntity(CoordinatorEntity, GeoLocationEntity):
+class AdsbAircraftEvent(CoordinatorEntity, GeolocationEvent):
     _attr_should_poll = False
 
     def __init__(self, coordinator: LocalAdsbCoordinator, entry, hex_code: str):
-        super().__init__(coordinator)
+        CoordinatorEntity.__init__(self, coordinator)
         self.entry = entry
         self.hex_code = hex_code.upper()
         self._attr_unique_id = f"{entry.entry_id}_aircraft_{self.hex_code}"
         self._attr_name = f"ADS-B {self.hex_code}"
+        self._attr_source = DOMAIN
         self.last_seen: datetime | None = None
 
     def _get_aircraft(self):
@@ -68,16 +68,16 @@ class AdsbAircraftEntity(CoordinatorEntity, GeoLocationEntity):
     @property
     def latitude(self):
         a = self._get_aircraft()
-        return a.get("lat") if a else None
+        if a and isinstance(a.get("lat"), (int, float)):
+            return float(a["lat"])
+        return None
 
     @property
     def longitude(self):
         a = self._get_aircraft()
-        return a.get("lon") if a else None
-
-    @property
-    def source(self):
-        return DOMAIN
+        if a and isinstance(a.get("lon"), (int, float)):
+            return float(a["lon"])
+        return None
 
     @property
     def extra_state_attributes(self):
