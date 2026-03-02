@@ -1,0 +1,18 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "ADS-B SDR Local",
+        "description": "Connect to a local tar1090/readsb/dump1090 aircraft.json endpoint.",
+        "data": {
+          "host": "Receiver IP/hostname",
+          "port": "Port",
+          "path": "Path to aircraft.json",
+          "scan_interval": "Update interval (seconds)",
+          "max_aircraft": "Max aircraft on map",
+          "mil_prefixes": "Military callsign prefixes (CSV)"
+        }
+      }
+    }
+  }
+}
