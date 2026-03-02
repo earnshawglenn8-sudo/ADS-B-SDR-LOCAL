@@ -1,0 +1,16 @@
+DOMAIN = "adsb_sdr_local"
+
+DEFAULT_PORT = 80
+DEFAULT_PATH = "/tar1090/data/aircraft.json"
+DEFAULT_SCAN_INTERVAL = 10
+DEFAULT_MAX_AIRCRAFT = 75
+
+# OpenSky
+DEFAULT_USE_OPENSKY = False
+DEFAULT_HOME_LAT = 0.0
+DEFAULT_HOME_LON = 0.0
+DEFAULT_RANGE_KM = 0  # 0 = global (not recommended)
+
+DEFAULT_MIL_PREFIXES = [
+  "RRR","QID","RCH","ASY","DUKE","BAF","RAF","CFC","NATO","VIVI","LAGR","NOBLE"
+]
